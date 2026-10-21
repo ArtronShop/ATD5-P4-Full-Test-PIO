@@ -1,0 +1,6 @@
+[submodule "lib/lvgl"]
+	path = lib/lvgl
+	url = https://github.com/lvgl/lvgl.git
+[submodule "lib/ATD5-P4"]
+	path = lib/ATD5-P4
+	url = https://github.com/ArtronShop/ATD5-P4_Library.git
