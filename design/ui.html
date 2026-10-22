@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><title>UI mock 800x480</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:800px;height:480px;overflow:hidden;background:#0d111c}
+body{font-family:"Leelawadee UI","Tahoma",sans-serif;color:#e8ecf4}
+.scr{position:relative;width:800px;height:480px;background:#0d111c;overflow:hidden;--ac:#60a5fa}
+svg{display:block}
+.sb{position:absolute;top:0;left:0;right:0;height:36px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:19px;font-weight:700;background:#090c14;color:#cfd6e6}
+.sb .r{display:flex;align-items:center;gap:8px;font-weight:400;font-size:17px;color:#cfd6e6}
+.tb{position:absolute;top:36px;left:0;right:0;height:60px;display:flex;align-items:center;padding:0 10px;gap:8px;background:#131929;border-bottom:2px solid var(--ac)}
+.back{width:52px;height:52px;border-radius:14px;background:#1f2740;display:flex;align-items:center;justify-content:center}
+.tt{font-size:26px;font-weight:700;flex:1}
+.tb .right{font-size:18px;color:#aab3c8;display:flex;align-items:center;gap:10px}
+.body{position:absolute;top:96px;left:0;right:0;bottom:0}
+/* home */
+.home-h{position:absolute;top:36px;left:0;right:0;height:50px;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+.home-h b{font-size:26px}.home-h span{font-size:16px;color:#7d88a3}
+.grid{position:absolute;top:90px;left:16px;right:16px;bottom:16px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:14px}
+.tile{border-radius:22px;background:#171e32;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid #232c47}
+.tile .ib{width:74px;height:74px;border-radius:22px;display:flex;align-items:center;justify-content:center}
+.tile b{font-size:21px}.tile i{font-style:normal;font-size:14px;color:#7d88a3;margin-top:-6px}
+/* shared */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:18px;font-weight:700;background:var(--ac);color:#0b1020}
+.card{background:#171e32;border:1px solid #232c47;border-radius:18px}
+.mut{color:#7d88a3}
+.row{display:flex;align-items:center}
+</style></head><body><div id="app"></div>
+<script>
+const I={
+chev:'<path d="M15 18l-6-6 6-6"/>',chevr:'<path d="M9 18l6-6-6-6"/>',
+pen:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+mon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+sd:'<path d="M6 2h9l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M9 6v4M12 6v4M15 6v4"/>',
+chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+usb:'<circle cx="12" cy="19" r="2"/><path d="M12 17V3M12 3l-2.2 3h4.4zM12 12L7 9.5V7.5M12 14.5l5-2.5V10"/><rect x="5.5" y="5" width="3" height="3"/><circle cx="17" cy="8.5" r="1.6"/>',
+io:'<rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="16.5" cy="12" r="2.8"/>',
+wifi:'<path d="M2 9a15 15 0 0 1 20 0M5.5 12.8a10 10 0 0 1 13 0M9 16.4a5 5 0 0 1 6 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>',
+folder:'<path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+file:'<path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5"/>',
+lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+play:'<path d="M7 4l13 8-13 8z" fill="currentColor"/>',
+prev:'<path d="M19 5v14L8 12zM5 5v14" />',next:'<path d="M5 5v14l11-7zM19 5v14"/>',
+vol:'<path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/>',
+eraser:'<path d="M20 20H9l-5-5a2 2 0 0 1 0-2.8L13 3.5a2 2 0 0 1 2.8 0l4.7 4.7a2 2 0 0 1 0 2.8L12 19.5"/><path d="M8 11l6 6"/>',
+trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+refresh:'<path d="M20 11A8 8 0 0 0 5.6 6.4L3 9M3 4v5h5M4 13a8 8 0 0 0 14.4 4.6L21 15M21 20v-5h-5"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+check:'<path d="M5 12l5 5 9-10"/>',
+eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+bksp:'<path d="M21 5H9l-6 7 6 7h12z"/><path d="M13 9l4 6M17 9l-4 6"/>',
+up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+shift:'<path d="M12 4l8 9h-5v6H9v-6H4z"/>'};
+function ic(n,s=28,c='currentColor',w=2){return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" style="color:${c}">${I[n]}</svg>`}
+function bars(n,c){let h='<svg width="30" height="24" viewBox="0 0 30 24">';for(let i=0;i<4;i++){h+=`<rect x="${i*8}" y="${18-i*5}" width="6" height="${6+i*5}" rx="2" fill="${i<n?c:'#323b57'}"/>`}return h+'</svg>'}
+function sb(){return `<div class="sb"><span>14:32</span><span class="r">${ic('wifi',22,'#4ade80',2.2)}MyHome_5G</span></div>`}
+function page(title,ac,body,right=''){return `<div class="scr" style="--ac:${ac}">${sb()}<div class="tb"><div class="back">${ic('chev',32)}</div><div class="tt">${title}</div><div class="right">${right}</div></div><div class="body">${body}</div></div>`}
+
+const M={touch:['ทดสอบสัมผัส','Touch','pen','#fb923c'],disp:['ทดสอบสีหน้าจอ','Display','mon','#a78bfa'],music:['เล่นเพลง','Audio','music','#f472b6'],sd:['MicroSD Card','SD Card','sd','#facc15'],i2c:['อุปกรณ์ I2C','Grove','chip','#34d399'],usb:['USB OTG','USB Host','usb','#60a5fa'],io:['ทดสอบ IO','GPIO','io','#22d3ee'],wifi:['WiFi','Scan / Connect','wifi','#fb7185']};
+
+const S={};
+S.home=()=>`<div class="scr">${sb()}<div class="home-h"><b>ชุดทดสอบฮาร์ดแวร์</b><span>ESP32-P4 · 800×480</span></div><div class="grid">`+
+Object.values(M).map(([t,s,i,c])=>`<div class="tile"><div class="ib" style="background:${c}22">${ic(i,42,c,2)}</div><b>${t}</b><i>${s}</i></div>`).join('')+`</div></div>`;
+
+S.draw=()=>{const cols=['#ffffff','#ff4d4d','#ffb020','#37d67a','#3ba0ff','#c084fc'];
+const pal=cols.map((c,i)=>`<div style="width:50px;height:50px;border-radius:50%;background:${c};${i==4?'box-shadow:0 0 0 4px #0d111c,0 0 0 7px '+c:''}"></div>`).join('');
+const cv=`<svg width="672" height="372" style="position:absolute;inset:0" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+<path d="M70 250C120 90 260 70 300 190S470 300 520 120" stroke="#3ba0ff"/>
+<path d="M90 300C200 330 330 320 420 280" stroke="#ff4d4d"/>
+<path d="M440 60C520 40 590 70 600 140S560 230 480 220" stroke="#37d67a"/>
+<path d="M150 80l70 30M150 120l70-30" stroke="#ffb020"/>
+<path d="M540 300c20-30 50-30 70 0" stroke="#fff"/></svg>
+<div style="position:absolute;left:468px;top:208px;width:34px;height:34px;border-radius:50%;border:2px dashed #fb923c"></div>`;
+return page('ทดสอบสัมผัส','#fb923c',`
+<div style="position:absolute;left:8px;top:6px;width:672px;height:372px;border-radius:16px;background:#080b12;border:2px solid #232c47;background-image:radial-gradient(#1c2438 1.5px,transparent 1.5px);background-size:32px 32px;overflow:hidden">${cv}
+<div style="position:absolute;left:12px;top:10px;font-size:15px;color:#566180">วาดบนพื้นที่นี้ได้เลย</div></div>
+<div style="position:absolute;left:688px;top:6px;width:104px;height:372px;display:flex;flex-direction:column;align-items:center;gap:10px">
+<div style="display:grid;grid-template-columns:50px 50px;gap:10px 4px;padding:6px 0 4px">${pal}</div>
+<div class="btn" style="width:96px;height:68px;flex-direction:column;gap:2px;font-size:16px;background:#1f2740;color:#e8ecf4">${ic('eraser',30)}ยางลบ</div>
+<div class="btn" style="width:96px;height:68px;flex-direction:column;gap:2px;font-size:16px;background:#1f2740;color:#e8ecf4">${ic('trash',28)}ล้างจอ</div></div>`,
+'X 412 · Y 236');};
+
+S.color=()=>`<div class="scr" style="background:#ff0000">
+<div class="sb" style="background:#00000033;color:#fff"><span>14:32</span><span class="r" style="color:#fff">${ic('wifi',22,'#fff',2.2)}MyHome_5G</span></div>
+<div style="position:absolute;top:48px;left:12px;width:52px;height:52px;border-radius:50%;background:#00000040;display:flex;align-items:center;justify-content:center">${ic('chev',32,'#fff')}</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;text-shadow:0 2px 8px #0005"><div style="font-size:64px;font-weight:700">แดง</div><div style="font-size:22px;opacity:.85">RED · #FF0000</div></div>
+<div style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font-size:20px;color:#fff;background:#00000040;padding:6px 22px;border-radius:20px">แตะหน้าจอเพื่อเปลี่ยนสี</div>
+<div style="display:flex;gap:10px">${['#ff0000','#16a34a','#2563eb','#ffffff','#000000','#facc15','#06b6d4','#d946ef'].map((c,i)=>`<div style="width:${i==0?30:20}px;height:${i==0?30:20}px;border-radius:50%;background:${c};border:2px solid ${i==0?'#fff':'#ffffff80'}"></div>`).join('')}</div></div></div>`;
+
+S.music=()=>{const eq=[40,70,95,60,110,80,50,90,65,100,45,75].map((h,i)=>`<rect x="${i*14+4}" y="${130-h}" width="9" height="${h}" rx="4" fill="#f472b6" opacity="${.5+h/220}"/>`).join('');
+return page('เล่นเพลง','#f472b6',`
+<div class="card" style="position:absolute;left:24px;top:30px;width:250px;height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#2a1633,#171e32)">${ic('music',64,'#f472b6',1.8)}<svg width="172" height="130" style="margin-top:10px">${eq}</svg></div>
+<div style="position:absolute;left:304px;top:26px;right:28px">
+<div style="font-size:30px;font-weight:700">เพลงทดสอบ 01</div><div class="mut" style="font-size:18px;margin-top:2px">test_audio.mp3 · 1 / 3</div>
+<div style="margin-top:28px;height:10px;border-radius:5px;background:#26304d;position:relative"><div style="width:38%;height:100%;border-radius:5px;background:#f472b6"></div><div style="position:absolute;left:38%;top:-7px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:#fff"></div></div>
+<div class="row mut" style="justify-content:space-between;font-size:16px;margin-top:10px"><span>01:12</span><span>03:05</span></div>
+<div class="row" style="justify-content:center;gap:30px;margin-top:22px">
+<div class="btn" style="width:72px;height:72px;border-radius:50%;background:#1f2740;color:#e8ecf4">${ic('prev',32)}</div>
+<div class="btn" style="width:96px;height:96px;border-radius:50%">${ic('play',46,'#0b1020')}</div>
+<div class="btn" style="width:72px;height:72px;border-radius:50%;background:#1f2740;color:#e8ecf4">${ic('next',32)}</div></div></div>
+<div class="row" style="position:absolute;left:24px;right:28px;bottom:26px;gap:16px">${ic('vol',34,'#aab3c8')}<div style="flex:1;height:12px;border-radius:6px;background:#26304d;position:relative"><div style="width:65%;height:100%;border-radius:6px;background:#aab3c8"></div><div style="position:absolute;left:65%;top:-8px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:#fff"></div></div><span style="font-size:20px;width:50px;text-align:right">65%</span></div>`);};
+
+S.sd=()=>{const R=[['up','..','ย้อนกลับ',''],['folder','music','12 ไฟล์','f'],['folder','photos','4 ไฟล์','f'],['file','test_log.txt','1.2 KB',''],['file','config.json','840 B',''],];
+const rows=R.map(([i,n,s,f])=>`<div class="row" style="height:62px;padding:0 16px;gap:16px;border-bottom:1px solid #1c2438">${ic(i=='up'?'up':i,34,f?'#facc15':i=='up'?'#7d88a3':'#aab3c8',1.8)}<div style="flex:1;font-size:23px;${i=='up'?'color:#7d88a3':''}">${n}</div><div class="mut" style="font-size:18px">${s}</div>${f?ic('chevr',26,'#566180'):'<div style="width:26px"></div>'}</div>`).join('');
+return page('MicroSD Card','#facc15',`
+<div class="row" style="height:56px;padding:0 16px;gap:12px;background:#10162a"><span style="font-size:20px;color:#facc15;font-weight:700">/sdcard</span><span style="font-size:20px">/</span><span style="font-size:20px">test</span><div style="flex:1"></div><span class="mut" style="font-size:16px">ใช้ 3.2 / 29.7 GB</span></div>
+<div style="position:absolute;top:56px;left:0;right:14px">${rows}</div>
+<div style="position:absolute;right:4px;top:66px;width:6px;height:200px;border-radius:3px;background:#323b57"></div>`,
+ic('check',26,'#4ade80')+'<span style="color:#4ade80">พบการ์ด</span>');};
+
+S.i2c=()=>{const D=[['0x3C','จอ OLED SSD1306'],['0x68','RTC DS3231'],['0x76','BME280 เซนเซอร์']];
+return page('อุปกรณ์ I2C (Grove)','#34d399',`
+<div style="position:absolute;left:20px;top:22px;width:290px">
+<div class="card" style="padding:14px 18px;display:flex;justify-content:space-between;font-size:17px"><span class="mut">SDA</span><b>GPIO 7</b><span class="mut">SCL</span><b>GPIO 8</b></div>
+<div class="btn" style="margin-top:20px;height:110px;font-size:32px;flex-direction:column;gap:4px">${ic('search',40,'#0b1020',2.4)}สแกนหา Address</div>
+<div class="mut" style="margin-top:14px;font-size:16px;text-align:center">สแกนช่วง 0x08 – 0x77</div></div>
+<div style="position:absolute;left:334px;right:20px;top:18px">
+<div class="row" style="justify-content:space-between;margin-bottom:10px"><span style="font-size:22px;font-weight:700">ผลการสแกน</span><span style="font-size:20px;color:#34d399;font-weight:700">พบ ${D.length} อุปกรณ์</span></div>
+${D.map(([a,n])=>`<div class="card row" style="height:76px;padding:0 16px;gap:16px;margin-bottom:10px"><div style="font-size:30px;font-weight:700;color:#34d399;width:110px;font-family:Consolas,monospace">${a}</div><div style="font-size:20px">${n}</div></div>`).join('')}</div>`);};
+
+S.usb1=()=>page('USB OTG','#60a5fa',`
+<div class="card" style="position:absolute;left:20px;right:20px;top:22px;bottom:22px;display:flex;align-items:center;gap:26px;padding:0 26px;border-color:#60a5fa66">
+<div style="width:150px;height:150px;border-radius:36px;background:#60a5fa22;display:flex;align-items:center;justify-content:center;position:relative">${ic('usb',84,'#60a5fa',1.7)}<div style="position:absolute;right:-8px;bottom:-8px;width:46px;height:46px;border-radius:50%;background:#4ade80;display:flex;align-items:center;justify-content:center">${ic('check',28,'#0b1020',3)}</div></div>
+<div style="flex:1"><div style="font-size:20px;color:#4ade80;font-weight:700">พบอุปกรณ์ USB</div>
+<div style="font-size:32px;font-weight:700;margin:4px 0 14px;line-height:1.15">Kingston DataTraveler 3.0</div>
+${[['ผู้ผลิต','Kingston'],['VID : PID','0951 : 1666'],['ชนิด','Mass Storage'],['ความเร็ว','High-Speed 480 Mbps']].map(([k,v])=>`<div class="row" style="font-size:20px;height:34px"><span class="mut" style="width:130px">${k}</span><span>${v}</span></div>`).join('')}</div></div>`,
+'<span style="color:#4ade80">● เชื่อมต่อ</span>');
+
+S.usb0=()=>page('USB OTG','#60a5fa',`
+<div class="card" style="position:absolute;left:20px;right:20px;top:22px;bottom:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border-style:dashed;border-color:#323b57">
+<div style="width:140px;height:140px;border-radius:36px;background:#1f2740;display:flex;align-items:center;justify-content:center;opacity:.8">${ic('usb',80,'#566180',1.6)}</div>
+<div style="font-size:32px;font-weight:700;margin-top:6px">ไม่พบอุปกรณ์</div><div class="mut" style="font-size:20px">กรุณาเสียบอุปกรณ์ที่พอร์ต USB OTG</div>
+<div class="row mut" style="gap:10px;font-size:16px;margin-top:4px"><span style="width:12px;height:12px;border-radius:50%;background:#60a5fa;display:inline-block"></span>กำลังตรวจสอบอัตโนมัติ...</div></div>`,
+'<span style="color:#7d88a3">○ ไม่มีอุปกรณ์</span>');
+
+function ioScreen(mode){const pins=[[4,1],[5,0],[6,1],[7,0],[20,0],[21,1],[22,0],[23,0]];const out=mode=='out';
+const seg=`<div class="row" style="position:absolute;left:20px;right:20px;top:10px;height:56px;border-radius:16px;background:#131929;padding:5px;gap:5px">
+${['out','in'].map(m=>`<div class="btn" style="flex:1;height:46px;border-radius:12px;font-size:20px;${m==mode?'':'background:transparent;color:#7d88a3'}">${m=='out'?'OUTPUT (สั่งขา)':'INPUT (อ่านค่า)'}</div>`).join('')}</div>`;
+const tiles=pins.map(([p,v])=>{const on=v==1;return `<div style="border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;${out?(on?'background:#22d3ee;color:#07202a;':'background:#171e32;border:1px solid #232c47;'):'background:#171e32;border:1px solid #232c47;'}">
+<div style="font-size:19px;${out&&on?'':'color:#aab3c8'}">GPIO ${p}</div>
+${out?`<div style="font-size:30px;font-weight:700">${on?'HIGH':'LOW'}</div><div style="font-size:14px;opacity:.7">แตะเพื่อสลับ</div>`:`<div style="width:34px;height:34px;border-radius:50%;background:${on?'#22d3ee':'#2a3350'};${on?'box-shadow:0 0 14px #22d3ee':''}"></div><div style="font-size:22px;font-weight:700;color:${on?'#22d3ee':'#7d88a3'}">${on?'HIGH':'LOW'}</div>`}</div>`}).join('');
+return page('ทดสอบ IO','#22d3ee',seg+`<div style="position:absolute;left:20px;right:20px;top:78px;bottom:14px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:12px">${tiles}</div>`);}
+S.io_out=()=>ioScreen('out');S.io_in=()=>ioScreen('in');
+
+S.wifi=()=>{const N=[['Office_2.4G',3,1],['Guest_WiFi',2,0],['TP-Link_A1B2',2,1],['AIS_Fiber_5G',1,1]];
+return page('WiFi','#fb7185',`
+<div class="row" style="margin:12px 16px 6px;height:68px;border-radius:16px;background:#fb718522;border:1px solid #fb718566;padding:0 18px;gap:14px">${ic('wifi',32,'#4ade80',2.2)}<div style="flex:1"><div style="font-size:23px;font-weight:700">MyHome_5G</div><div style="font-size:15px;color:#4ade80">เชื่อมต่อแล้ว · 192.168.1.45</div></div>${bars(4,'#4ade80')}</div>
+<div style="padding:0 20px;font-size:15px;color:#7d88a3;height:24px">เครือข่ายที่พบ</div>
+${N.map(([n,s,l])=>`<div class="row" style="height:56px;padding:0 20px;gap:14px;border-bottom:1px solid #1c2438"><div style="flex:1;font-size:22px">${n}</div>${l?ic('lock',22,'#7d88a3'):'<div style="width:22px"></div>'}${bars(s+1>4?4:s+1,'#fb7185')}</div>`).join('')}`,
+`<div class="btn" style="width:56px;height:44px;border-radius:12px;background:#1f2740;color:#e8ecf4">${ic('refresh',26)}</div><div style="width:58px;height:32px;border-radius:16px;background:#4ade80;position:relative"><div style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:50%;background:#fff"></div></div>`);};
+
+S.wifipw=()=>{const rows=['1234567890','qwertyuiop','asdfghjkl','zxcvbnm'];
+const key=(k,w,st='')=>`<div class="btn" style="flex:${w};height:54px;border-radius:12px;font-size:24px;background:#222b45;color:#e8ecf4;${st}">${k}</div>`;
+const kb=`<div style="position:absolute;left:8px;right:8px;bottom:8px;display:flex;flex-direction:column;gap:7px">
+<div class="row" style="gap:6px">${[...rows[0]].map(k=>key(k,1)).join('')}</div>
+<div class="row" style="gap:6px">${[...rows[1]].map(k=>key(k,1)).join('')}</div>
+<div class="row" style="gap:6px;padding:0 36px">${[...rows[2]].map(k=>key(k,1)).join('')}</div>
+<div class="row" style="gap:6px">${key(ic('shift',26),1.6,'background:#2d3858')}${[...rows[3]].map(k=>key(k,1)).join('')}${key(ic('bksp',28),1.6,'background:#2d3858')}</div>
+<div class="row" style="gap:6px">${key('123',1.6,'background:#2d3858;font-size:20px')}${key('.',1)}${key('ช่องว่าง',6,'font-size:18px;color:#7d88a3')}${key('@',1)}${key(ic('check',30,'#0b1020',3),1.8,'background:#fb7185')}</div></div>`;
+return page('เชื่อมต่อ Office_2.4G','#fb7185',`
+<div class="row" style="position:absolute;left:12px;right:12px;top:8px;height:58px;border-radius:14px;background:#080b12;border:2px solid #fb7185;padding:0 16px;gap:12px">${ic('lock',26,'#7d88a3')}<div style="flex:1;font-size:26px;letter-spacing:3px">••••••••<span style="border-left:2px solid #fb7185;margin-left:2px"></span></div>${ic('eye',28,'#aab3c8')}</div>`+kb);};
+
+document.getElementById('app').innerHTML=S[new URLSearchParams(location.search).get('s')||'home']();
+</script></body></html>
