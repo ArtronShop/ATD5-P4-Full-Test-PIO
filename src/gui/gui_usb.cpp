@@ -84,35 +84,36 @@ void str_desc_to_utf8(const usb_str_desc_t * d, char * out, size_t n) {
 }
 
 void on_new_device(uint8_t address) {
-    if (g_dev) { // single device is enough for this test
+    if (g_dev) { // a single device is enough for this test
         usb_host_device_close(g_client, g_dev);
         g_dev = nullptr;
     }
-    usb_device_handle_t dev;
+    usb_device_handle_t dev = nullptr;
     if (usb_host_device_open(g_client, address, &dev) != ESP_OK) {
         return;
     }
-    g_dev = dev;
+    g_dev = dev; // keep it open so that the removal is reported
 
     UsbInfo info;
     info.connected = true;
 
-    usb_device_info_t di;
+    usb_device_info_t di = {};
     if (usb_host_device_info(dev, &di) == ESP_OK) {
         info.speed = (int) di.speed;
         str_desc_to_utf8(di.str_desc_product, info.product, sizeof(info.product));
         str_desc_to_utf8(di.str_desc_manufacturer, info.vendor, sizeof(info.vendor));
     }
 
-    const usb_device_desc_t * dd;
-    if (usb_host_get_device_descriptor(dev, &dd) == ESP_OK) {
+    const usb_device_desc_t * dd = nullptr;
+    if (usb_host_get_device_descriptor(dev, &dd) == ESP_OK && dd) {
         info.vid = dd->idVendor;
         info.pid = dd->idProduct;
         info.cls = dd->bDeviceClass;
     }
+
     if (info.cls == 0) { // class is defined per interface
-        const usb_config_desc_t * cfg;
-        if (usb_host_get_active_config_descriptor(dev, &cfg) == ESP_OK) {
+        const usb_config_desc_t * cfg = nullptr;
+        if (usb_host_get_active_config_descriptor(dev, &cfg) == ESP_OK && cfg) {
             const uint8_t * p = (const uint8_t *) cfg;
             uint16_t total = cfg->wTotalLength;
             for (uint16_t i = 0; i + 9 <= total; i += p[i] ? p[i] : 1) { // walk descriptors, first interface wins
@@ -129,7 +130,30 @@ void on_new_device(uint8_t address) {
     portEXIT_CRITICAL(&g_mux);
 }
 
+// Safety net in case a client NEW_DEV / DEV_GONE event is missed: follow the library's own
+// device count. Called from the lib task after every library event.
+SemaphoreHandle_t g_dev_mutex = nullptr;
+
+void sync_devices(int num_devices) {
+    xSemaphoreTake(g_dev_mutex, portMAX_DELAY);
+    if (num_devices > 0 && !g_dev) {
+        uint8_t addrs[8] = {};
+        int n = 0;
+        if (usb_host_device_addr_list_fill(sizeof(addrs), addrs, &n) == ESP_OK && n > 0) {
+            on_new_device(addrs[0]);
+        }
+    } else if (num_devices == 0 && g_dev) {
+        usb_host_device_close(g_client, g_dev);
+        g_dev = nullptr;
+        portENTER_CRITICAL(&g_mux);
+        g_info = UsbInfo();
+        portEXIT_CRITICAL(&g_mux);
+    }
+    xSemaphoreGive(g_dev_mutex);
+}
+
 void client_event_cb(const usb_host_client_event_msg_t * msg, void *) {
+    xSemaphoreTake(g_dev_mutex, portMAX_DELAY);
     if (msg->event == USB_HOST_CLIENT_EVENT_NEW_DEV) {
         on_new_device(msg->new_dev.address);
     } else if (msg->event == USB_HOST_CLIENT_EVENT_DEV_GONE) {
@@ -141,12 +165,16 @@ void client_event_cb(const usb_host_client_event_msg_t * msg, void *) {
         g_info = UsbInfo();
         portEXIT_CRITICAL(&g_mux);
     }
+    xSemaphoreGive(g_dev_mutex);
 }
 
 void lib_task(void *) {
     while (true) {
-        uint32_t flags;
+        uint32_t flags = 0;
         usb_host_lib_handle_events(portMAX_DELAY, &flags);
+        usb_host_lib_info_t li = {};
+        usb_host_lib_info(&li);
+        sync_devices(li.num_devices);
     }
 }
 
@@ -154,6 +182,14 @@ void client_task(void *) {
     while (true) {
         usb_host_client_handle_events(g_client, portMAX_DELAY);
     }
+}
+
+// Called once the device descriptor of a new device has been read.
+// Return true to enumerate it, and pick configuration 1 (must not block or submit transfers).
+// REQUIRED since Arduino core 3.3.11: with a NULL filter every device is rejected silently.
+bool enum_filter(const usb_device_desc_t * dev_desc, uint8_t * bConfigurationValue) {
+    *bConfigurationValue = 1;
+    return true;
 }
 
 void start_host() {
@@ -164,6 +200,8 @@ void start_host() {
 
     usb_host_config_t cfg = {};
     cfg.intr_flags = ESP_INTR_FLAG_LEVEL1;
+    cfg.enum_filter_cb = enum_filter;
+    cfg.peripheral_map = GUI_USB_PERIPHERAL_MAP;
     if (usb_host_install(&cfg) != ESP_OK) {
         g_failed = true;
         return;
@@ -179,6 +217,7 @@ void start_host() {
         return;
     }
 
+    g_dev_mutex = xSemaphoreCreateMutex();
     xTaskCreate(lib_task, "usb_lib", 4096, NULL, 4, NULL);
     xTaskCreate(client_task, "usb_client", 6144, NULL, 4, NULL);
 }

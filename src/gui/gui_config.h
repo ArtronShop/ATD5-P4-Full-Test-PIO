@@ -23,6 +23,10 @@
 #define GUI_NTP_SERVER_1       "pool.ntp.org"
 #define GUI_NTP_SERVER_2       "time.google.com"
 
+// USB host peripheral: 0 = SDK default (High-Speed OTG on ESP32-P4).
+// Set to (1 << 0) or (1 << 1) to force the first / second USB OTG peripheral.
+#define GUI_USB_PERIPHERAL_MAP 0
+
 // Display geometry (see lib/ATD5-P4/src/Common.h)
 #define GUI_W                  800
 #define GUI_H                  480
